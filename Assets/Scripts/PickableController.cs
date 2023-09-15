@@ -33,7 +33,7 @@ public class PickableController : PoolableMonoBehaviour
             _rigidbody.isKinematic = false;
             isPickedUp = true;
             PlayerController player = other.GetComponent<PlayerController>();
-            StartCoroutine(PlayMagnetAnimation(player));
+            if(!player.isDead) StartCoroutine(PlayMagnetAnimation(player));
         }
     }
     
@@ -52,14 +52,14 @@ public class PickableController : PoolableMonoBehaviour
             if (Vector3.Distance(player.transform.position, transform.position) < 0.5f)
             {
                 onPickablePickedUp?.Invoke();
-                ResetToDefault();
+                Reset();
                 FactoryService.instance.pickables[_id].Release(this);
                 break;
             }
         }
     }
 
-    private void ResetToDefault()
+    private void Reset()
     {
         isPickedUp = false;
         transform.position = Vector3.zero;

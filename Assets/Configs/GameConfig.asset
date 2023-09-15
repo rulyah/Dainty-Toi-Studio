@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d17c46963ae947c6bc6b185dde037cac, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: 
+  playerMaxMoveSpeed: 3
+  playerAcceleration: 3
+  playerMaxHealth: 100
+  playerSpawnPoint: {x: 4, y: 0, z: 2}
+  enemyCount: 1
+  enemyMaxMoveSpeed: 2
+  enemyAcceleration: 2
+  enemyRotationSpeed: 3
+  enemyAttackRange: 2
+  enemyAttackCooldown: 1
+  enemyDamage: 20
+  bulletSpeed: 5
+  spawnInterval: 3
+  spawnOffset: {x: 0, y: 0.1, z: 0}

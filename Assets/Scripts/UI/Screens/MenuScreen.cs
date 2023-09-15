@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,6 +7,7 @@ namespace UI.Screens
 {
     public class MenuScreen : Screen
     {
+        [SerializeField] private TextMeshProUGUI _levelText;
         [SerializeField] private Button _playBtn;
         [SerializeField] private Button _exitBtn;
     
@@ -26,6 +28,11 @@ namespace UI.Screens
             base.Hide();
         }
 
+        public void SetText(string text)
+        {
+            _levelText.text = text;
+        }
+        
         private void Play()
         {
             onPlay?.Invoke();

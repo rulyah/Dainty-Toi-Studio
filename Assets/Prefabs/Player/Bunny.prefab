@@ -1018,7 +1018,7 @@ GameObject:
   - component: {fileID: 5338186180663666831}
   m_Layer: 7
   m_Name: Bunny
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1127,7 +1127,7 @@ MonoBehaviour:
   _animator: {fileID: 348352911659586251}
   _rigidbody: {fileID: 1806657101848745441}
   _virtualCamera: {fileID: 0}
-  _playerConfig: {fileID: 11400000, guid: 05e5402a8d33c4695819a0a0835f1117, type: 2}
+  _config: {fileID: 11400000, guid: 05e5402a8d33c4695819a0a0835f1117, type: 2}
 --- !u!1 &3082138590553423610
 GameObject:
   m_ObjectHideFlags: 0

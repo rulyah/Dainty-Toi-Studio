@@ -1,35 +1,53 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace UI
 {
     public class ScreenManager : MonoBehaviour
     {
-        private ErrorPopup _errorPopup;
+        public static ScreenManager instance { get; private set; }
+        //private Popup _popup;
         private List<Screen> _screens = new();
         private Stack<Screen> _screenStack = new();
         //private Queue<string> _errorQueue = new();
     
         private void Awake()
         {
-            var popupPrefab = Resources.Load<ErrorPopup>("Popups/Popup");
-            _errorPopup = Instantiate(popupPrefab, transform);
-        
+            if (instance != null)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            
             var screens = Resources.LoadAll<Screen>("Screens");
-            Debug.Log("Loaded screens: " + screens.Length);
     
             foreach (var screen in screens)
             {
                 var instance = Instantiate(screen, transform);
                 _screens.Add(instance);
             }
+            
+            var popupPrefab = Resources.Load<Popup>("Popups/Popup");
+            var popup = Instantiate(popupPrefab, transform);
+            _screens.Add(popup);
         }
 
-        public void OpenScreen(ScreenTypes type)
+        public Screen OpenScreen(ScreenTypes type)
         {
             var screen = _screens.Find(n => n.type == type);
             screen.Show();
             _screenStack.Push(screen);
+            return screen;
+        }
+        
+        public Screen GetCurrentScreen()
+        {
+            return _screenStack.Peek();
         }
 
         public void CloseLastScreen()
@@ -38,31 +56,31 @@ namespace UI
             _screenStack.Pop().Hide();
         }
 
-        public void ShowPopup(string text)
+        /*public void ShowPopup(string text)
         {
-            _errorPopup.errorQueue.Enqueue(text);
+            _popup.errorQueue.Enqueue(text);
 
-            if (_errorPopup.errorQueue.Count == 1)
+            if (_popup.errorQueue.Count == 1)
             {
-                _errorPopup.Show();
-                _errorPopup.SetErrorMessages(text);
-                _errorPopup.onConfirm += HideErrorPopup;
+                _popup.Show();
+                _popup.SetErrorMessages(text);
+                _popup.onConfirm += HidePopup;
             }
         }
     
-        public void HideErrorPopup()
+        public void HidePopup()
         {
-            _errorPopup.onConfirm -= HideErrorPopup;
-            _errorPopup.errorQueue.Dequeue();
-            _errorPopup.Hide();
+            _popup.onConfirm -= HidePopup;
+            _popup.errorQueue.Dequeue();
+            _popup.Hide();
 
         
-            if (_errorPopup.errorQueue.Count > 0)
+            if (_popup.errorQueue.Count > 0)
             {
-                _errorPopup.Show();
-                _errorPopup.SetErrorMessages(_errorPopup.errorQueue.Peek());
-                _errorPopup.onConfirm += HideErrorPopup;
+                _popup.Show();
+                _popup.SetErrorMessages(_popup.errorQueue.Peek());
+                _popup.onConfirm += HidePopup;
             }
-        }
+        }*/
     }
 }
