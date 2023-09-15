@@ -80,7 +80,7 @@ GameObject:
   - component: {fileID: 8192911601095712529}
   - component: {fileID: 7642595904982714275}
   - component: {fileID: 7189732452617113084}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Corn
   m_TagString: Untagged
   m_Icon: {fileID: 0}

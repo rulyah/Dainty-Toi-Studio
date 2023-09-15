@@ -31,7 +31,7 @@ namespace Services.Factory
             pickables = new List<Factory<PickableController>>(_pickables.Count);
             for(var i = 0; i < _pickables.Count; i++)
             {
-                var pickable = new Factory<PickableController>(_pickables[i], 50);
+                var pickable = new Factory<PickableController>(_pickables[i], 200);
                 pickables.Add(pickable);
             }
         }

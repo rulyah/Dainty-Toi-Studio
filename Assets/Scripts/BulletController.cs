@@ -55,7 +55,7 @@ namespace DefaultNamespace
             else
             {
                 var distance = Vector3.Distance(_startPos, transform.position);
-                if(distance > 15) FactoryService.instance.bullets.Release(this);
+                if(distance > 20) FactoryService.instance.bullets.Release(this);
             }
         }
     }

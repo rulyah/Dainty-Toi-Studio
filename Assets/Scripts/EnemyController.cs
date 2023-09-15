@@ -59,7 +59,7 @@ public class EnemyController : PoolableMonoBehaviour
             
             Vector3 direction = _target.transform.position - transform.position;
             direction.y = 0;
-            Quaternion rotationToPlayer = Quaternion.LookRotation(direction);
+            Quaternion rotationToPlayer = Quaternion.LookRotation(direction.normalized);
             transform.rotation = Quaternion.Slerp(transform.rotation, rotationToPlayer, Time.deltaTime * _rotationSpeed);
             
             if(distance > _attackRange) ChasePlayer();
@@ -100,7 +100,8 @@ public class EnemyController : PoolableMonoBehaviour
                 {
                     var bullet = FactoryService.instance.bullets.Produce();
                     bullet.transform.position = _shootPoint.position;
-                    var direction = _target.transform.position - _shootPoint.position;
+                    var direction = (new Vector3(_target.transform.position.x, 
+                        0.5f, _target.transform.position.z) - _shootPoint.position).normalized;
                     bullet.Fire(direction, _bulletSpeed, _damage);
                     StartCoroutine(Delay(0.5f, () =>
                     {

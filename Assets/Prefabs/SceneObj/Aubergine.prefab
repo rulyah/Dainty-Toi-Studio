@@ -80,7 +80,7 @@ GameObject:
   - component: {fileID: 7169981006814203106}
   - component: {fileID: 1926717635038343708}
   - component: {fileID: 5527075332452168905}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Aubergine
   m_TagString: Untagged
   m_Icon: {fileID: 0}

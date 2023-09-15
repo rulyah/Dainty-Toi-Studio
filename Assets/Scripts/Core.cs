@@ -19,8 +19,9 @@ public class Core : MonoBehaviour
     private LevelConfig _currentLevelConfig;
     private PlayerController _player;
     private CameraController _camera;
-    private List<EnemyController> _enemys;
+    private List<EnemyController> _enemys = new();
     public CoreModel _model { get; private set; }
+    public bool isGameOver { get; private set; }
     
     private void Awake()
     {
@@ -37,12 +38,17 @@ public class Core : MonoBehaviour
 
     private void Start()
     {
-        SetTask();
+        SetLvlConfig();
+        _model = new CoreModel(_currentLevelConfig.taskCount, _currentLevelConfig.taskId);
         ShowMenuScreen();
+        PlayerPrefs.DeleteAll();
     }
 
     private void ShowMenuScreen()
     {
+        _screenManager.CloseLastScreen();
+        SetLvlConfig();
+        _model = new CoreModel(_currentLevelConfig.taskCount, _currentLevelConfig.taskId);
         var screen = (MenuScreen)_screenManager.OpenScreen(ScreenTypes.MENU);
         screen.SetText((_currentLevelConfig.levelId + 1).ToString());
         screen.onPlay += OnPlay;
@@ -51,6 +57,7 @@ public class Core : MonoBehaviour
 
     private void OnPlay()
     {
+        isGameOver = false;
         var previous = (MenuScreen)_screenManager.GetCurrentScreen();
         previous.onPlay -= OnPlay;
         previous.onExit -= OnExit;
@@ -65,7 +72,7 @@ public class Core : MonoBehaviour
         }));
         
         screen.SetTaskImg(_currentLevelConfig.sprite);
-        screen.SetTaskCount(_currentLevelConfig.count);
+        screen.SetTaskCount(_currentLevelConfig.taskCount);
         screen.onMenu += OnMenu;
     }
     
@@ -103,11 +110,14 @@ public class Core : MonoBehaviour
         Application.Quit();
     }
 
-    private void SetTask()
+    private void SetLvlConfig()
     {
         var lvl = SaveManager.instance.GetCurrentLvl();
+        if (lvl >= _levelConfigs.Count)
+        {
+            lvl = 0;
+        }
         _currentLevelConfig = _levelConfigs[lvl];
-        _model = new CoreModel(_currentLevelConfig.count, _currentLevelConfig.id);
     }
 
     private void PlayerInit()
@@ -117,6 +127,7 @@ public class Core : MonoBehaviour
         CameraInit();
         _player.SetupParameters(_config.playerMaxMoveSpeed,_config.playerAcceleration, _config.playerMaxHealth, _camera);
         _player.onDeath += OnDeath;
+        _player.onPickup += OnPickup;
     }
 
     private void EnemyInit()
@@ -153,10 +164,72 @@ public class Core : MonoBehaviour
             _screenManager.CloseLastScreen();
             SceneManager.LoadScene(sceneBuildIndex: 0);
             var screen = (LoseScreen)ScreenManager.instance.OpenScreen(ScreenTypes.LOSE);
-            screen.onMenu += ShowMenuScreen;
+            screen.onMenu += OnLoseMenuClick;
         }));
     }
 
+    private void OnVictory()
+    {
+        SaveManager.instance.SaveCurrentLevel(_currentLevelConfig.levelId + 1);
+        var previous = (GameScreen)_screenManager.GetCurrentScreen();
+        previous.onMenu -= OnMenu;
+        _screenManager.CloseLastScreen();
+        SceneManager.LoadScene(sceneBuildIndex: 0);
+        var screen = (VictoryScreen)ScreenManager.instance.OpenScreen(ScreenTypes.VICTORY);
+        screen.onMenu += OnVictoryMenuClick;
+    }
+
+    public void OnPickup(int id)
+    {
+        if(isGameOver) return;
+        _model.ChangeCount(id);
+        if (_model.taskFoodCount <= 0)
+        {
+            isGameOver = true;
+            OnVictory();
+        }
+        else
+        {
+            var screen = (GameScreen)_screenManager.GetCurrentScreen();
+            screen.SetTaskCount(_model.taskFoodCount);
+        }
+    }
+
+    private void ReloadGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void OnLoseMenuClick()
+    {
+        var previous = (LoseScreen)_screenManager.GetCurrentScreen();
+        previous.onMenu -= OnLoseMenuClick;
+        _screenManager.CloseLastScreen();
+        SetLvlConfig();
+        _model = new CoreModel(_currentLevelConfig.taskCount, _currentLevelConfig.taskId);
+        var screen = (MenuScreen)_screenManager.OpenScreen(ScreenTypes.MENU);
+        screen.SetText((_currentLevelConfig.levelId + 1).ToString());
+        screen.onPlay += OnPlay;
+    }
+
+    private void OnVictoryMenuClick()
+    {
+        var previous = (VictoryScreen)_screenManager.GetCurrentScreen();
+        previous.onMenu -= OnVictoryMenuClick;
+        _screenManager.CloseLastScreen();
+        SetLvlConfig();
+        _model = new CoreModel(_currentLevelConfig.taskCount, _currentLevelConfig.taskId);
+        var screen = (MenuScreen)_screenManager.OpenScreen(ScreenTypes.MENU);
+        screen.SetText((_currentLevelConfig.levelId + 1).ToString());
+        screen.onPlay += OnPlay;
+    }
+
+    public void GetInput(Vector2 input)
+    {
+        if(isGameOver) return;
+        if(_player != null) _player.SetInput(input);
+    }
+    
     private IEnumerator Delay(float waitTime, Action action)
     {
         yield return new WaitForSeconds(waitTime);

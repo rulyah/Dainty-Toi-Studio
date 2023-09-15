@@ -9,8 +9,9 @@ public class PickableController : PoolableMonoBehaviour
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private TriggerListener _triggerListener;
     [SerializeField] private int _id;
+    public int id => _id;
     public bool isPickedUp { get; private set; }
-    
+    private Coroutine _magnetCoroutine;
     public event Action onPickablePickedUp;
 
     public void Init()
@@ -33,7 +34,7 @@ public class PickableController : PoolableMonoBehaviour
             _rigidbody.isKinematic = false;
             isPickedUp = true;
             PlayerController player = other.GetComponent<PlayerController>();
-            if(!player.isDead) StartCoroutine(PlayMagnetAnimation(player));
+            if(!player.isDead) _magnetCoroutine = StartCoroutine(PlayMagnetAnimation(player));
         }
     }
     
@@ -42,7 +43,8 @@ public class PickableController : PoolableMonoBehaviour
         while (true)
         {
             yield return null;
-            
+            if(Core.instance.isGameOver) yield break;
+
             Vector3 direction = (player.transform.position - transform.position).normalized;
             direction.y = 0.0f;
             direction.Normalize();
@@ -53,6 +55,7 @@ public class PickableController : PoolableMonoBehaviour
             {
                 onPickablePickedUp?.Invoke();
                 Reset();
+                Core.instance.OnPickup(id);
                 FactoryService.instance.pickables[_id].Release(this);
                 break;
             }
@@ -61,6 +64,7 @@ public class PickableController : PoolableMonoBehaviour
 
     private void Reset()
     {
+        StopCoroutine(_magnetCoroutine);
         isPickedUp = false;
         transform.position = Vector3.zero;
         _rigidbody.velocity = Vector3.zero;

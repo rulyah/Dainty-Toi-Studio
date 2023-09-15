@@ -21,10 +21,5 @@ namespace Configs
         public float enemyAttackCooldown;
         public int enemyDamage;
         public float bulletSpeed;
-        
-        [Space(10)]
-        [Header("SpawnPoints")]
-        public float spawnInterval;
-        public Vector3 spawnOffset;
     }
 }

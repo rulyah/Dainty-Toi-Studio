@@ -10,6 +10,7 @@ namespace UI.Screens
         [SerializeField] private Button _menuBtn;
         [SerializeField] private Image _image;
         [SerializeField] private TextMeshProUGUI _count;
+        [SerializeField] private FixedJoystick _joystick;
         
         public event Action onMenu;
 
@@ -38,6 +39,12 @@ namespace UI.Screens
         private void Menu()
         {
             onMenu?.Invoke();
+        }
+
+        private void Update()
+        {
+            var input = _joystick.Direction;
+            Core.instance.GetInput(input);
         }
     }
 }

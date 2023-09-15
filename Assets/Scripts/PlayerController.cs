@@ -1,6 +1,5 @@
 using System;
 using Cinemachine;
-using Configs;
 using UnityEngine;
 using Utils.FactoryTool;
 
@@ -11,8 +10,11 @@ public class PlayerController : PoolableMonoBehaviour
 
     private float _maxMoveSpeed;
     private float _acceleration;
+    private bool _isInitialized = false;
     private PlayerModel _model;
     private CinemachineVirtualCamera _virtualCamera;
+    private float _joystickHorizontal;
+    private float _joystickVertical;
 
     
     
@@ -22,7 +24,9 @@ public class PlayerController : PoolableMonoBehaviour
     private static readonly int _gotHit = Animator.StringToHash("gotHit");
 
     public bool isDead { get; private set; }
+    
     public event Action onDeath;
+    public event Action<int> onPickup;
     
     public void SetupParameters(float maxMoveSpeed, float acceleration, int maxHealth, CameraController virtualCamera)
     {
@@ -31,6 +35,7 @@ public class PlayerController : PoolableMonoBehaviour
         _virtualCamera = virtualCamera.camera;
         _model = new PlayerModel(maxHealth);
         isDead = false;
+        _isInitialized = true;
     }
 
     public void TakeDamage(int damage)
@@ -47,12 +52,20 @@ public class PlayerController : PoolableMonoBehaviour
         }
     }
 
+    public void SetInput(Vector2 input)
+    {
+        _joystickHorizontal = input.x;
+        _joystickVertical = input.y;
+    }
+
     private void Update()
     {
         if(isDead) return;
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-        Vector3 direction = new Vector3(horizontal, 0, vertical);
+        if(!_isInitialized) return;
+        
+        //float horizontal = //Input.GetAxis("Horizontal");
+        //float vertical = Input.GetAxis("Vertical");
+        Vector3 direction = new Vector3(_joystickHorizontal, 0, _joystickVertical);
 
         direction = _virtualCamera.transform.TransformDirection(direction);
         direction.y = 0.0f;

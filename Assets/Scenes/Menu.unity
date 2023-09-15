@@ -408,6 +408,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2d4562258ebe34b8c8a884f59c6bd101, type: 2}
   - {fileID: 11400000, guid: 213480f72b13641d8aea47577c684da6, type: 2}
   - {fileID: 11400000, guid: 93452539cf67e4e7d93793e38eb352f1, type: 2}
+  _config: {fileID: 11400000, guid: 8bd8c0dbf3a674e76884764cc02cf08f, type: 2}
 --- !u!4 &1600600219
 Transform:
   m_ObjectHideFlags: 0
